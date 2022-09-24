@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="FinanceAppDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="loans">
+    <Key>
+      <PropertyRef Name="loanID" />
+    </Key>
+    <Property Name="loanID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="loanCreditor" Type="text" Nullable="false" />
+    <Property Name="loanPrincipal" Type="float" Nullable="false" />
+    <Property Name="loanTerm" Type="int" Nullable="false" />
+    <Property Name="loanInterest" Type="float" Nullable="false" />
+    <Property Name="loanTotal" Type="float" Nullable="false" />
+    <Property Name="loanAmountPaid" Type="float" Nullable="false" />
+    <Property Name="loanDT" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+    <Property Name="userID" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="transactions">
+    <Key>
+      <PropertyRef Name="transactID" />
+    </Key>
+    <Property Name="transactID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="transactType" Type="text" Nullable="false" />
+    <Property Name="transactName" Type="text" Nullable="false" />
+    <Property Name="transactAmount" Type="float" Nullable="false" />
+    <Property Name="transactDT" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+    <Property Name="userID" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="users">
+    <Key>
+      <PropertyRef Name="userID" />
+    </Key>
+    <Property Name="userID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="username" Type="char" MaxLength="64" Nullable="false" />
+    <Property Name="fname" Type="char" MaxLength="64" Nullable="false" />
+    <Property Name="lname" Type="char" MaxLength="64" Nullable="false" />
+    <Property Name="userpass" Type="char" MaxLength="128" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_loans_users">
+    <End Role="users" Type="Self.users" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="loans" Type="Self.loans" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="userID" />
+      </Principal>
+      <Dependent Role="loans">
+        <PropertyRef Name="userID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_transactions_users">
+    <End Role="users" Type="Self.users" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="transactions" Type="Self.transactions" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="userID" />
+      </Principal>
+      <Dependent Role="transactions">
+        <PropertyRef Name="userID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="FinanceAppDBModelStoreContainer">
+    <EntitySet Name="loans" EntityType="Self.loans" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="transactions" EntityType="Self.transactions" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="users" EntityType="Self.users" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_loans_users" Association="Self.FK_loans_users">
+      <End Role="users" EntitySet="users" />
+      <End Role="loans" EntitySet="loans" />
+    </AssociationSet>
+    <AssociationSet Name="FK_transactions_users" Association="Self.FK_transactions_users">
+      <End Role="users" EntitySet="users" />
+      <End Role="transactions" EntitySet="transactions" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="FinanceAppDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="loan">
+    <Key>
+      <PropertyRef Name="loanID" />
+    </Key>
+    <Property Name="loanID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="loanCreditor" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="loanPrincipal" Type="Double" Nullable="false" />
+    <Property Name="loanTerm" Type="Int32" Nullable="false" />
+    <Property Name="loanInterest" Type="Double" Nullable="false" />
+    <Property Name="loanTotal" Type="Double" Nullable="false" />
+    <Property Name="loanAmountPaid" Type="Double" Nullable="false" />
+    <Property Name="loanDT" Type="Binary" MaxLength="8" FixedLength="true" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
+    <Property Name="userID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="user" Relationship="Self.FK_loans_users" FromRole="loans" ToRole="users" />
+  </EntityType>
+  <EntityType Name="transaction">
+    <Key>
+      <PropertyRef Name="transactID" />
+    </Key>
+    <Property Name="transactID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="transactType" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="transactName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="transactAmount" Type="Double" Nullable="false" />
+    <Property Name="transactDT" Type="Binary" MaxLength="8" FixedLength="true" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
+    <Property Name="userID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="user" Relationship="Self.FK_transactions_users" FromRole="transactions" ToRole="users" />
+  </EntityType>
+  <EntityType Name="user">
+    <Key>
+      <PropertyRef Name="userID" />
+    </Key>
+    <Property Name="userID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="username" Type="String" MaxLength="64" FixedLength="true" Unicode="false" Nullable="false" />
+    <Property Name="fname" Type="String" MaxLength="64" FixedLength="true" Unicode="false" Nullable="false" />
+    <Property Name="lname" Type="String" MaxLength="64" FixedLength="true" Unicode="false" Nullable="false" />
+    <Property Name="userpass" Type="String" MaxLength="128" FixedLength="true" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="loans" Relationship="Self.FK_loans_users" FromRole="users" ToRole="loans" />
+    <NavigationProperty Name="transactions" Relationship="Self.FK_transactions_users" FromRole="users" ToRole="transactions" />
+  </EntityType>
+  <Association Name="FK_loans_users">
+    <End Role="users" Type="Self.user" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="loans" Type="Self.loan" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="userID" />
+      </Principal>
+      <Dependent Role="loans">
+        <PropertyRef Name="userID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_transactions_users">
+    <End Role="users" Type="Self.user" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="transactions" Type="Self.transaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="userID" />
+      </Principal>
+      <Dependent Role="transactions">
+        <PropertyRef Name="userID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="FinanceAppDBEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="loans" EntityType="Self.loan" />
+    <EntitySet Name="transactions" EntityType="Self.transaction" />
+    <EntitySet Name="users" EntityType="Self.user" />
+    <AssociationSet Name="FK_loans_users" Association="Self.FK_loans_users">
+      <End Role="users" EntitySet="users" />
+      <End Role="loans" EntitySet="loans" />
+    </AssociationSet>
+    <AssociationSet Name="FK_transactions_users" Association="Self.FK_transactions_users">
+      <End Role="users" EntitySet="users" />
+      <End Role="transactions" EntitySet="transactions" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

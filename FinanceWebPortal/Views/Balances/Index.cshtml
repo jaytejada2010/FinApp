@@ -1,0 +1,136 @@
+﻿@model FinanceWebPortal.transaction
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@{
+    var data1 = (IEnumerator<transaction>)ViewData["transacts1"];
+    var data2 = (IEnumerator<transaction>)ViewData["transacts2"];
+}
+
+<div class="container">
+    <div class="row">
+        <div style="height: 90%; width: 50%" class="col-xs-6">
+            <h2>Income</h2>
+            <table class="table">
+                <tr>
+                    <td><center><b>Item ID</b></center></td>
+                    <td><center><b>Name</b></center></td>
+                    <td><center><b>Amount</b></center></td>
+                </tr>
+                @{
+                    transaction t;
+                    user u = (user)Session["curUser"];
+                    double total = 0;
+                    while (data1.MoveNext())
+                    {
+                        t = data1.Current;
+                        t.transactType = t.transactType.Trim();
+                        if (t.userID == u.userID && t.transactType.Equals("Income"))
+                        {
+                            total += t.transactAmount;
+                            <tr>
+                                <td><center>@t.transactID</center></td>
+                                <td><center>@t.transactName</center></td>
+                                <td><center>PHP @t.transactAmount</center></td>
+                            </tr>
+                        }
+                    }
+                }
+            </table>
+        </div>
+        <div style="height: 90% !important; width: 50%" class="col-xs-6">
+            <h2>Expenses</h2>
+            <table class="table">
+                <tr>
+                    <td><center><b>Item ID</b></center></td>
+                    <td><center><b>Name</b></center></td>
+                    <td><center><b>Amount</b></center></td>
+                </tr>
+                @{transaction t2;
+                    double total2 = 0;
+                    while (data2.MoveNext())
+                    {
+                        t2 = data2.Current;
+                        t2.transactType = t2.transactType.Trim();
+                        if (t2.userID == u.userID && t2.transactType.Equals("Expense"))
+                        {
+                            total2 += t2.transactAmount;
+                            <tr>
+                                <td><center>@t2.transactID</center></td>
+                                <td><center>@t2.transactName</center></td>
+                                <td><center>PHP @t2.transactAmount</center></td>
+                            </tr>
+                        }
+                    }
+                }
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <hr />
+        <div style="height: 5%; width: 50%" class="col-xs-6">
+            <h3>Total Income: PHP @total</h3>
+        </div>
+        <div style="height: 5%; width: 50%" class="col-xs-6">
+            <h3>Total Expense: PHP @total2</h3>
+        </div>
+    </div>
+    <div class="row">
+        <hr />
+        <div style="height: 5%; width: 50%" class="col-xs-6">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                Add Balance Item
+            </button>
+        </div>
+        <div style="height: 5%; width: 50%" class="col-xs-6">
+            @{
+                double bal = total - total2;
+                <h3>Total Balance: PHP @bal</h3>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Add Balance Item Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel">Add Balance Item</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group container">
+                    @using (Html.BeginForm("AddItem", "Balances", FormMethod.Post, new { id = "create" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <table>
+                            <tr>
+                                <td style="width: 100px"><center><label>Item Type</label></center></td>
+                                <td>@Html.EditorFor(model => model.transactType, new { htmlAttributes = new { @class = "form-control", @placeholder = "Item Type: Income or Expense", @style = "width: 300px;" } })</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 100px"><center><label>Item Name</label></center></td>
+                                <td>@Html.EditorFor(model => model.transactName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Balance Item Name", @style = "width: 300px;" } })</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 100px"><center><label>Item Amount</label></center></td>
+                                <td>@Html.EditorFor(model => model.transactAmount, new { htmlAttributes = new { @class = "form-control", @type = "number", @placeholder = "Balance Item Amount", @style = "width: 300px;" } })</td>
+                            </tr>
+                        </table>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" form="create">Add Balance Item</button>
+            </div>
+        </div>
+    </div>
+</div>
+

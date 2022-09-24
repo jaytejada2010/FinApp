@@ -1,0 +1,59 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+
+    IEnumerator<transaction> data2 = (IEnumerator<transaction>) ViewData["transacts"];
+    IEnumerator<loan> data1 = (IEnumerator<loan>) ViewData["loans"];
+    user u = (user)Session["curUser"];
+}
+<style>
+    h1 {
+        text-align: center;
+        margin: 0;
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    a:link, a:visited, a:hover, a:active {
+        color: white;
+        text-decoration: none;
+        
+    }
+
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col" style="background: #5ebd3c; height: 250px; border-radius: 25px">
+            @{ 
+                transaction nowCash;
+                double cashRemain = 0;
+                while (data2.MoveNext())
+                {
+                    nowCash = (transaction)data2.Current;
+                    if (nowCash.userID == u.userID)
+                    {
+                        cashRemain += (nowCash.transactType.Trim().Equals("Income")) ? (nowCash.transactAmount) : (-nowCash.transactAmount);
+                    }
+                }
+            }
+            <h1>@Html.ActionLink("Total Cash on Hand: PHP " + cashRemain, "Index", "Balances")</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col" style="background: #9b3cbd; height: 250px; border-radius: 25px">
+            @{
+                loan nowLoan;
+                double loanRemain = 0;
+                while (data1.MoveNext())
+                {
+                    nowLoan = (loan)data1.Current;
+                    if (nowLoan.userID == u.userID)
+                    {
+                        loanRemain += (nowLoan.loanTotal - nowLoan.loanAmountPaid);
+                    }
+                }
+            }
+            <h1>@Html.ActionLink("Total Loans: PHP " + loanRemain, "Index", "Loans")</h1>
+        </div>
+    </div>
+</div>

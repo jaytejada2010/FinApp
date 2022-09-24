@@ -1,0 +1,45 @@
+﻿@model FinanceWebPortal.user
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+
+<div class="container" id="container">
+    <div class="form-container sign-up-container">
+        @using (Html.BeginForm("CreateUser", "Login", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <h1>Create Account</h1>
+            @Html.EditorFor(model => model.fname, new { htmlAttributes = new { @class = "form-control", @placeholder = "First Name" } })
+            @Html.EditorFor(model => model.lname, new { htmlAttributes = new { @class = "form-control", @placeholder = "Last Name" } })
+            @Html.EditorFor(model => model.username, new { htmlAttributes = new { @class = "form-control", @placeholder = "Username" } })
+            @Html.EditorFor(model => model.userpass, new { htmlAttributes = new { @class = "form-control", @type = "password" ,@placeholder = "Password" } })
+            <button>Sign Up</button>
+        }
+        </div>
+    <div class="form-container sign-in-container">
+        @using (Html.BeginForm("Verify", "Login", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <h1>Sign in</h1>
+            @Html.EditorFor(model => model.username, new { htmlAttributes = new { @class = "form-control", @placeholder = "Username" } })
+            @Html.EditorFor(model => model.userpass, new { htmlAttributes = new { @class = "form-control", @placeholder = "Password", @type = "password" } })
+            <button>Sign In</button>
+        }
+    </div>
+    <div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-left">
+                <h1>Welcome Back!</h1>
+                <p>To keep connected with us please login with your personal info</p>
+                <button class="ghost" id="signIn">Sign In</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h1>Hello, Friend!</h1>
+                <p>Enter your personal details and start journey with us</p>
+                <button class="ghost" id="signUp">Sign Up</button>
+            </div>
+        </div>
+    </div>
+</div>
